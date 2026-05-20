@@ -1,0 +1,50 @@
+services:
+  php-fpm-84:
+    build:
+      context: .
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+      dockerfile: ./php/php8.4.Dockerfile
+    container_name: php8.4-fpm
+    working_dir: /var/www/app
+    ports:
+      - "8084:8084"
+    volumes:
+      - ../public_html:/var/www/app:rw
+      - ../data/log:/var/log/php:rw
+      - ./php/configs/php8.4.ini:/usr/local/etc/php/php.ini:ro
+      - ./php/configs/php8.4-fpm.ini:/usr/local/etc/php-fpm.conf:ro  
+  php-fpm-80:
+    build:
+      context: .
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+      dockerfile: ./php/php8.0.Dockerfile
+    container_name: php8.0-fpm
+    working_dir: /var/www/app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../public_html:/var/www/app:rw
+      - ../data/log:/var/log/php:rw
+      - ./php/configs/php8.0.ini:/usr/local/etc/php/php.ini:ro
+      - ./php/configs/php8.0-fpm.ini:/usr/local/etc/php-fpm.conf:ro      
+  
+  php-fpm-74:
+    build:
+      context: .
+      args:
+        USER_UID: ${UID:-1000}
+        USER_GID: ${GID:-1000}
+      dockerfile: ./php/php7.4.Dockerfile
+    container_name: php7.4-fpm
+    working_dir: /var/www/app
+    ports:
+      - "8074:8074"
+    volumes:
+      - ../public_html:/var/www/app:rw
+      - ../data/log:/var/log/php:rw
+      - ./php/configs/php7.4.ini:/usr/local/etc/php/php.ini:ro
+      - ./php/configs/php7.4-fpm.ini:/usr/local/etc/php-fpm.conf:ro      
