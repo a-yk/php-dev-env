@@ -39,6 +39,4 @@ WORKDIR /var/www/app
 
 RUN chown -R app:app /var/www/app && chmod -R 777 /var/log && chmod -R 777 /var/run
 
-EXPOSE 9074
-
 CMD ["php-fpm"]
