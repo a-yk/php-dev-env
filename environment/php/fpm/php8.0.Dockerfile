@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.0-fpm
 
 ARG USER_UID=1000
 ARG USER_GID=1000
@@ -30,13 +30,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         zip \
         simplexml \
         mbstring \
-    && pecl install amqp \
-    && docker-php-ext-enable amqp
+    && pecl install amqp xdebug \
+    && docker-php-ext-enable amqp xdebug
 
 RUN addgroup --gid ${USER_UID} app && adduser --uid ${USER_UID} --gid ${USER_UID} --shell /bin/sh app
 
-WORKDIR /var/www/app
+WORKDIR /var/www/html
 
-RUN chown -R app:app /var/www/app && chmod -R 777 /var/log && chmod -R 777 /var/run
+RUN chown -R app:app /var/www/html && chmod -R 777 /var/log && chmod -R 777 /var/run
 
 CMD ["php-fpm"]

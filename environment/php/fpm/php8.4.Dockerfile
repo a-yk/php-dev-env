@@ -35,8 +35,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 
 RUN addgroup --gid ${USER_UID} app && adduser --uid ${USER_UID} --gid ${USER_UID} --shell /bin/sh app
 
-WORKDIR /var/www/app
+WORKDIR /var/www/html
 
-RUN chown -R app:app /var/www/app && chmod -R 777 /var/log && chmod -R 777 /var/run
+RUN chown -R app:app /var/www/html && chmod -R 777 /var/log && chmod -R 777 /var/run
 
 CMD ["php-fpm"]
