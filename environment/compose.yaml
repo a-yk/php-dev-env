@@ -124,7 +124,27 @@ services:
       - "3306:3306"
     volumes:
       - ../data/db/mysql:/var/lib/mysql
+    networks:
+      - app-network
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_CONTROLHOST: mysql
+      PMA_CONTROLPORT: 3306
+      PMA_PMADB: phpmyadmin
+      PMA_CONTROLUSER: pma
+      PMA_CONTROLPASS: pma
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
 
 networks:
   app-network:
