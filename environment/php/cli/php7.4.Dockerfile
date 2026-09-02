@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
         libwebp-dev \
         libxml2-dev \
-        libonig-dev
+        libonig-dev \
+        librdkafka-dev
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
@@ -30,8 +31,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         zip \
         simplexml \
         mbstring \
-    && pecl install amqp xdebug-3.1.5 \
-    && docker-php-ext-enable amqp xdebug
+    && pecl install amqp xdebug-3.1.5 rdkafka \
+    && docker-php-ext-enable amqp xdebug rdkafka
 
 RUN addgroup --gid ${USER_UID} app && adduser --uid ${USER_UID} --gid ${USER_UID} --shell /bin/sh app
 
