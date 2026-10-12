@@ -20,7 +20,9 @@ RUN apt-get update && apt-get install -y \
         libpng-dev \
         libwebp-dev \
         libxml2-dev \
-        libonig-dev
+        libonig-dev \
+        librdkafka-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
@@ -30,13 +32,15 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         zip \
         simplexml \
         mbstring \
-    && pecl install amqp xdebug \
-    && docker-php-ext-enable amqp xdebug
+    && pecl install amqp xdebug rdkafka \
+    && docker-php-ext-enable amqp xdebug rdkafka
 
 RUN addgroup --gid ${USER_UID} app && adduser --uid ${USER_UID} --gid ${USER_UID} --shell /bin/sh app
 
 WORKDIR /var/www/html
 
 RUN chown -R app:app /var/www/html && chmod -R 777 /var/log && chmod -R 777 /var/run
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 CMD ["php-fpm"]

@@ -1,5 +1,8 @@
 *
-!broker-1
-!broker-2
-!broker-3
+!broker1
+!broker2
+!broker3
+!controller1
+!controller2
+!controller3
 !.gitignore

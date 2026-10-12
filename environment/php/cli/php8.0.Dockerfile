@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
         libwebp-dev \
         libxml2-dev \
         libonig-dev \
-        librdkafka-dev
+        librdkafka-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \

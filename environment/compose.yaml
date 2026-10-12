@@ -12,40 +12,43 @@ services:
     volumes:
       - ../public_html:/var/www/html:rw
       - ./php/configs/php8.4.ini:/usr/local/etc/php/php.ini:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - app-network
 
-  php-cli-80:
-    build:
-      context: .
-      args:
-        USER_UID: ${UID:-1000}
-        USER_GID: ${GID:-1000}
-      dockerfile: ./php/cli/php8.0.Dockerfile
-    container_name: php8.0-cli
-    tty: true
-    working_dir: /var/www/html
-    volumes:
-      - ../public_html:/var/www/html:rw
-      - ./php/configs/php8.0.ini:/usr/local/etc/php/php.ini:ro
-    networks:
-      - app-network
+  #Debian 11 doesn't support
+  #php-cli-80:
+  #  build:
+  #    context: .
+  #    args:
+  #      USER_UID: ${UID:-1000}
+  #      USER_GID: ${GID:-1000}
+  #    dockerfile: ./php/cli/php8.0.Dockerfile
+  #  container_name: php8.0-cli
+  #  tty: true
+  #  working_dir: /var/www/html
+  #  volumes:
+  #    - ../public_html:/var/www/html:rw
+  #    - ./php/configs/php8.0.ini:/usr/local/etc/php/php.ini:ro
+  #  networks:
+  #    - app-network
 
-  php-cli-74:
-    build:
-      context: .
-      args:
-        USER_UID: ${UID:-1000}
-        USER_GID: ${GID:-1000}
-      dockerfile: ./php/cli/php7.4.Dockerfile
-    container_name: php7.4-cli
-    tty: true
-    working_dir: /var/www/html
-    volumes:
-      - ../public_html:/var/www/html:rw
-      - ./php/configs/php7.4.ini:/usr/local/etc/php/php.ini:ro
-    networks:
-      - app-network
+  #php-cli-74:
+  #  build:
+  #    context: .
+  #    args:
+  #      USER_UID: ${UID:-1000}
+  #      USER_GID: ${GID:-1000}
+  #    dockerfile: ./php/cli/php7.4.Dockerfile
+  #  container_name: php7.4-cli
+  #  tty: true
+  #  working_dir: /var/www/html
+  #  volumes:
+  #    - ../public_html:/var/www/html:rw
+  #    - ./php/configs/php7.4.ini:/usr/local/etc/php/php.ini:ro
+  #  networks:
+  #    - app-network
 
   php-fpm-84:
     build:
@@ -61,42 +64,44 @@ services:
       - ../data/log/php:/var/log/php:rw
       - ./php/configs/php8.4.ini:/usr/local/etc/php/php.ini:ro
       - ./php/configs/php8.4-fpm.ini:/usr/local/etc/php-fpm.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - app-network
 
-  php-fpm-80:
-    build:
-      context: .
-      args:
-        USER_UID: ${UID:-1000}
-        USER_GID: ${GID:-1000}
-      dockerfile: ./php/fpm/php8.0.Dockerfile
-    container_name: php8.0-fpm
-    working_dir: /var/www/html
-    volumes:
-      - ../public_html:/var/www/html:rw
-      - ../data/log/php:/var/log/php:rw
-      - ./php/configs/php8.0.ini:/usr/local/etc/php/php.ini:ro
-      - ./php/configs/php8.0-fpm.ini:/usr/local/etc/php-fpm.conf:ro
-    networks:
-      - app-network
+  #php-fpm-80:
+  #  build:
+  #    context: .
+  #    args:
+  #      USER_UID: ${UID:-1000}
+  #      USER_GID: ${GID:-1000}
+  #    dockerfile: ./php/fpm/php8.0.Dockerfile
+  #  container_name: php8.0-fpm
+  #  working_dir: /var/www/html
+  #  volumes:
+  #    - ../public_html:/var/www/html:rw
+  #    - ../data/log/php:/var/log/php:rw
+  #    - ./php/configs/php8.0.ini:/usr/local/etc/php/php.ini:ro
+  #    - ./php/configs/php8.0-fpm.ini:/usr/local/etc/php-fpm.conf:ro
+  #  networks:
+  #    - app-network
 
-  php-fpm-74:
-    build:
-      context: .
-      args:
-        USER_UID: ${UID:-1000}
-        USER_GID: ${GID:-1000}
-      dockerfile: ./php/fpm/php7.4.Dockerfile
-    container_name: php7.4-fpm
-    working_dir: /var/www/html
-    volumes:
-      - ../public_html:/var/www/html:rw
-      - ../data/log/php:/var/log/php:rw
-      - ./php/configs/php7.4.ini:/usr/local/etc/php/php.ini:ro
-      - ./php/configs/php7.4-fpm.ini:/usr/local/etc/php-fpm.conf:ro
-    networks:
-      - app-network
+  #php-fpm-74:
+  #  build:
+  #    context: .
+  #    args:
+  #      USER_UID: ${UID:-1000}
+  #      USER_GID: ${GID:-1000}
+  #    dockerfile: ./php/fpm/php7.4.Dockerfile
+  #  container_name: php7.4-fpm
+  #  working_dir: /var/www/html
+  #  volumes:
+  #    - ../public_html:/var/www/html:rw
+  #    - ../data/log/php:/var/log/php:rw
+  #    - ./php/configs/php7.4.ini:/usr/local/etc/php/php.ini:ro
+  #    - ./php/configs/php7.4-fpm.ini:/usr/local/etc/php-fpm.conf:ro
+  #  networks:
+  #    - app-network
 
   httpd:
     build:
@@ -147,120 +152,158 @@ services:
       - app-network
 
   #kafka
-  controller-1:
+  #sudo sysctl fs.inotify.max_user_instances=512
+  #sudo sysctl fs.inotify.max_user_watches=524288
+  controller1:
     image: apache/kafka-native:latest
-    container_name: controller-1
+    container_name: controller1
+    volumes:
+      - ../data/kafka/controller1:/tmp/kafka-logs:rw
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     networks:
       - app-network
 
-  controller-2:
+  controller2:
     image: apache/kafka-native:latest
-    container_name: controller-2
+    container_name: controller2
+    volumes:
+      - ../data/kafka/controller2:/tmp/kafka-logs:rw
     environment:
       KAFKA_NODE_ID: 2
       KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     networks:
       - app-network
 
-  controller-3:
+  controller3:
     image: apache/kafka-native:latest
-    container_name: controller-3
+    container_name: controller3
+    volumes:
+      - ../data/kafka/controller3:/tmp/kafka-logs:rw
     environment:
       KAFKA_NODE_ID: 3
       KAFKA_PROCESS_ROLES: controller
-      KAFKA_LISTENERS: CONTROLLER://:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT
+      KAFKA_LISTENERS: CONTROLLER://0.0.0.0:9093
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     networks:
       - app-network
 
-  broker-1:
+  broker1:
     image: apache/kafka-native:latest
-    container_name: broker-1
+    container_name: broker1
     volumes:
-      - ../data/kafka/broker-1:/tmp/kafka-logs:rw
+      - ../data/kafka/broker1:/tmp/kafka-logs:rw
     ports:
-      - 29092:9092
+      - 19092:19092
     environment:
       KAFKA_NODE_ID: 4
       KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-1:19092,PLAINTEXT_HOST://localhost:29092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:19092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker1:9092,PLAINTEXT_HOST://localhost:19092'
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
+      - controller1
+      - controller2
+      - controller3
     networks:
       - app-network
 
-  broker-2:
+  broker2:
     image: apache/kafka-native:latest
-    container_name: broker-2
+    container_name: broker2
     volumes:
-      - ../data/kafka/broker-2:/tmp/kafka-logs:rw
+      - ../data/kafka/broker2:/tmp/kafka-logs:rw
     ports:
-      - 39092:9092
+      - 29092:29092
     environment:
       KAFKA_NODE_ID: 5
       KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-2:19092,PLAINTEXT_HOST://localhost:39092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker2:9092,PLAINTEXT_HOST://localhost:29092'
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
+      - controller1
+      - controller2
+      - controller3
     networks:
       - app-network
 
-  broker-3:
+  broker3:
     image: apache/kafka-native:latest
-    container_name: broker-3
+    container_name: broker3
     volumes:
-      - ../data/kafka/broker-3:/tmp/kafka-logs:rw
+      - ../data/kafka/broker3:/tmp/kafka-logs:rw
     ports:
-      - 49092:9092
+      - 39092:39092
     environment:
       KAFKA_NODE_ID: 6
       KAFKA_PROCESS_ROLES: broker
-      KAFKA_LISTENERS: 'PLAINTEXT://:19092,PLAINTEXT_HOST://:9092'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker-3:19092,PLAINTEXT_HOST://localhost:49092'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:39092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker3:9092,PLAINTEXT_HOST://localhost:39092'
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller-1:9093,2@controller-2:9093,3@controller-3:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@controller1:9093,2@controller2:9093,3@controller3:9093
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_LOG_DIRS: /tmp/kafka-logs
+      CLUSTER_ID: "2afc7a9b-d35f-4877-9c7f-10b831aa5f13"
     depends_on:
-      - controller-1
-      - controller-2
-      - controller-3
+      - controller1
+      - controller2
+      - controller3
+    networks:
+      - app-network
+
+  kafbat-ui:
+    container_name: kafbat-ui
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - 9080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "broker1:9092,broker2:9092,broker3:9092"
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
+
+    depends_on:
+      - controller1
+      - controller2
+      - controller3
+      - broker1
+      - broker2
+      - broker3
     networks:
       - app-network
 

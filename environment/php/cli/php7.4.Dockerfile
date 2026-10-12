@@ -3,6 +3,8 @@ FROM php:7.4-cli
 ARG USER_UID=1000
 ARG USER_GID=1000
 
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 RUN apt-get update && apt-get install -y \
         make \
         librabbitmq-dev \
@@ -21,7 +23,8 @@ RUN apt-get update && apt-get install -y \
         libwebp-dev \
         libxml2-dev \
         libonig-dev \
-        librdkafka-dev
+        librdkafka-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
